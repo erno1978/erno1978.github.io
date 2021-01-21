@@ -1,0 +1,69 @@
+BODY
+{
+    FONT-FAMILY: Arial, Helvetica, sans-serif;
+    FONT-SIZE: 10pt;
+}
+TD
+{
+    FONT-FAMILY: Arial, Helvetica, sans-serif;
+    FONT-SIZE: 10pt
+}
+A:link
+{
+	FONT-WEIGHT: bold;
+	TEXT-DECORATION: underline
+}
+A
+{
+    COLOR: black
+}
+
+A:visited
+{
+    FONT-WEIGHT: bold;
+    TEXT-DECORATION: underline
+}
+A:active
+{
+    FONT-WEIGHT: bold;
+    TEXT-DECORATION: underline
+}
+A:hover
+{
+    COLOR: red;
+    FONT-WEIGHT: bold;
+    TEXT-DECORATION: underline
+}
+H1
+{
+    COLOR: black;
+    FONT-FAMILY: Times Roman, Times New Roman, Arial, Helvetica, sans-serif;
+    FONT-SIZE: 40pt;
+    FONT-WEIGHT: normal
+}
+H2
+{
+    COLOR: black;
+    FONT-FAMILY: Times Roman, Times New Roman, Arial, Helvetica, sans-serif;
+    FONT-SIZE: 20pt;
+    FONT-WEIGHT: normal
+}
+H3
+{
+    COLOR: black;
+    FONT-FAMILY: Times Roman, Times New Roman, Arial, Helvetica, sans-serif;
+    FONT-SIZE: 12pt;
+    FONT-WEIGHT: bold
+}
+TEXTAREA
+{
+    COLOR: black
+    FONT-FAMILY: Arial;
+    FONT-SIZE: 8pt;
+}
+INPUT
+{
+    COLOR: black;
+    FONT-FAMILY: Arial;
+    FONT-SIZE: 10pt
+}

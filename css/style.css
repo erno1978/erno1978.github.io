@@ -18,7 +18,26 @@ html,body{
 }
 
 body{
-  font:normal 75% Arial, Helvetica, sans-serif;
+  font:normal 75% Arial, Helvetica, sans-serif, bold;
 }
 
+a:link{ 
+  text-decoration: none; 
+  color: rgb(1, 65, 1);
+}
 
+a:visited{ 
+  text-decoration: none;
+  color: rgb(1, 65, 1);
+}
+
+a:hover{ 
+  text-decoration: none; 
+  color: rgb(255, 255, 255);
+  background-color: rgb(1, 65, 1);
+}
+
+a:active {
+  text-decoration: none; 
+  color: rgb(158, 30, 30);
+}

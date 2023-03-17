@@ -1,19 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
-
 	<head>
 		<meta charset="utf-8">
 		<title>Ernstig.com</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
 		<link rel="stylesheet" media="screen" href="css/style.css">
+
+		<script>
+			function switchImage(imageSrc) {
+				document.getElementById('ernstig').src = imageSrc;
+			  	document.getElementById('ernstig').style="max-width:90%; max-height:20%"
+			}
+		</script>
 	</head>
 
 	<body>
 		<br>
 		<div>
-			<p align="center">
-				<img style="max-width:90%; max-height:20%" src="img/ernstig.png">
-			</p>
+				<div>
+					<p align="center">
+						<a href="#" onclick="switchImage('img/ernstigNL.png')">NL</a> |
+						<a href="#" onclick="switchImage('img/ernstigEN.png')">EN</a>
+					</p>
+				</div>
+				<div>
+					<p align="center">
+						<img id="ernstig" src="img/ernstigNL.png">
+					<p align="center"></p>
+				<div>
 		</div>
 
 		<div style="margin-top: 2%">
@@ -23,7 +37,5 @@
 				<a href="https://www.linkedin.com/in/ernstnoorlander"><img src="img/linkedin.png" width="5%"></a>
 			</p>
 		</div>
-
 	</body>
-	
-</html>
+</html>	

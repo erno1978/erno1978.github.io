@@ -1,2 +1,2 @@
 # erno1978.github.io
-ERNSTIG.com
+Website content of Ernstig.com

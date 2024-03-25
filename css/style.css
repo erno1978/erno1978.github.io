@@ -1,3 +1,14 @@
+@font-face {
+  font-family: 'Erno2024Font';
+  src: url('fonts/Erno2024.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  font-family: 'Erno2024Font', sans-serif;
+}
+
 html,body,div,span,h1,h2,h3,h4,h5,h6,p,address,img,tr,th,td,header{
   margin:0;
   padding:0;
@@ -15,10 +26,6 @@ html,body{
   height:100%;
   background:#c6d3cb;
   font-size:14px;
-}
-
-body{
-  font:normal 75% Arial, Helvetica, sans-serif, bold;
 }
 
 a:link{ 

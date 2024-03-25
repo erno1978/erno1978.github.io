@@ -10,12 +10,24 @@ body {
   font-family: 'Erno2024Font', sans-serif;
 }
 
+#content-container {
+  display: flex;
+  justify-content: center;
+  text-align: left;
+}
+
+#text {
+  /* Aanpassen op basis van je eigen voorkeur voor de breedte */
+  max-width: 600px; 
+}
+
+
 html,body,div,span,h1,h2,h3,h4,h5,h6,p,address,img,tr,th,td,header{
   margin:0;
   padding:0;
   border:0;
   outline:0;
-  font-size:100%;
+  font-size:120%;
   vertical-align:baseline;
   background:transparent
 }
@@ -49,3 +61,4 @@ a:active {
   text-decoration: none; 
   color: rgb(158, 30, 30);
 }
+

@@ -16,7 +16,33 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
 		<link rel="stylesheet" media="screen" href="css/style.css">
 
+
+		
 		<script>
+			function switchLanguage(language) {
+    const textEN = "* &nbsp;Freelance developer / cybersecurity specialist<br>" +
+                   "* &nbsp;Result-oriented<br>" +
+                   "* &nbsp;Communicative<br>" +
+                   "* &nbsp;Makes abstract concrete<br>" +
+                   "* &nbsp;Can create fonts like this :-)<br>" +
+                   "* &nbsp;...and also fun to work with!<br>";
+
+    const textNL = "* &nbsp;Freelance developer / cybersecurity specialist<br>" +
+                   "* &nbsp;Resultaatgericht<br>" +
+                   "* &nbsp;Communicatief<br>" +
+                   "* &nbsp;Maakt abstract concreet<br>" +
+                   "* &nbsp;Kan ook lettertypes maken zoals deze :-)<br>" +
+                   "* &nbsp;...en ook leuk om mee samen te werken!<br>";
+
+    if (language === 'EN') {
+        document.getElementById('text').innerHTML = textEN;
+        switchImage('img/headerEN.png');
+    } else if (language === 'NL') {
+        document.getElementById('text').innerHTML = textNL;
+        switchImage('img/headerNL.png');
+    }
+}
+
 			function switchImage(imageSrc) {
 				document.getElementById('ernstig').src = imageSrc;
 			  	document.getElementById('ernstig').style="max-width:90%; max-height:20%"
@@ -29,13 +55,30 @@
 		<div>
 				<div>
 					<p align="center">
-						<a href="#" onclick="switchImage('img/ernstigNL.png')">Nederlands</a> |
-						<a href="#" onclick="switchImage('img/ernstigEN.png')">English</a>
+						<a href="#" onclick="switchLanguage('NL')">Nederlands</a> |
+						<a href="#" onclick="switchLanguage('EN')">English</a>
 					</p>
 				</div>
 				<div>
+
 					<p align="center">
-						<img id="ernstig" src="img/ernstigNL.png" style="max-width:90%; max-height:20%">
+						<img id="ernstig" src="img/headerNL.png" style="max-width:90%; max-height:20%">
+<br><br>
+
+<div id="text-container" style="text-align: center;">
+    <div id="text" style="text-align: left; display: inline-block;">
+
+
+* &nbsp;Freelance developer/cybersecurity specialist<br>
+* &nbsp;Resultaatgericht<br>
+* &nbsp;Communicatief<br>
+* &nbsp;Maakt abstract concreet<br>
+* &nbsp;Kan ook lettertypes maken zoals deze :-)<br>
+* &nbsp;...en ook leuk om mee samen te werken!!<br>
+</p>
+</div>
+
+						
 					<p align="center"></p>
 				<div>
 		</div>

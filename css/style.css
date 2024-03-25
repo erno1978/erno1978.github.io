@@ -1,6 +1,7 @@
 @font-face {
   font-family: 'Erno2024Font';
-  src: url('fonts/Erno2024.woff2') format('woff2');
+  src: url('Erno2024.woff2') format('woff2'),
+       url('Erno2024.woff') format('woff');
   font-weight: normal;
   font-style: normal;
 }

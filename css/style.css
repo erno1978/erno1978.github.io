@@ -97,7 +97,7 @@ ul.sublist {
   list-style-type: square; /* Of 'none' als je geen bullets wilt */
   color: #814002; /* De kleur van de sublist items */
   padding-left: 40px; /* Vergroot de inspringing */
-  font-size: 0.6em; /* Maakt de tekst kleiner; pas aan naar wens */
+  font-size: 0.75em; /* Maakt de tekst kleiner; pas aan naar wens */
 }
 
 ul.sublist li {

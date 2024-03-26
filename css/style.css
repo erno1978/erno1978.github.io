@@ -77,6 +77,7 @@ ul {
 }
 
 li {
+  margin-top: 15px; /* Geeft ruimte tussen de lijstitems */
   margin-bottom: 5px; /* Geeft ruimte tussen de lijstitems */
 }
 
@@ -96,3 +97,15 @@ body {
   background: linear-gradient(to right, #a8d8a8, #a4b8a9, #a8d8a8);
 }
 
+ul.sublist {
+  list-style-type: square; /* Of 'none' als je geen bullets wilt */
+  color: #814002; /* De kleur van de sublist items */
+  padding-left: 40px; /* Vergroot de inspringing */
+  font-size: 0.6em; /* Maakt de tekst kleiner; pas aan naar wens */
+}
+
+ul.sublist li {
+  margin-top: 0; /* Zet de bovenmarge op 0 */
+  margin-bottom: 0; /* Zet de ondermarge op 0 voor minimale ruimte */
+  padding-bottom: 2px; /* Voegt een beetje ruimte toe onder elk item, pas naar wens aan */
+}

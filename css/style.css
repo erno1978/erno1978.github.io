@@ -90,7 +90,7 @@ a.contact-link:hover {
 }
 
 body {
-  background: linear-gradient(to right, #a8d8a8, #a4b8a9, #a8d8a8);
+  background: linear-gradient(to left top, #83da83, #a4b8a9, #62b462);
 }
 
 ul.sublist {

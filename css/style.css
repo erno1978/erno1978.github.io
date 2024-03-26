@@ -10,15 +10,22 @@ body {
   font-family: 'Erno2024Font', sans-serif;
 }
 
-#content-container {
-  display: flex;
-  justify-content: center;
-  text-align: left;
+img#ernstig {
+  max-width: 100%;
+  height: auto;
+  display: block; /* Dit zorgt ervoor dat de afbeelding zijn eigen lijn krijgt en gecentreerd kan worden */
+  margin: 0 auto; /* Centreert de afbeelding binnen zijn container */
 }
 
-#text {
-  /* Aanpassen op basis van je eigen voorkeur voor de breedte */
-  max-width: 600px; 
+#text-container {
+  max-width: 564px; /* De maximale breedte van de tekstcontainer */
+  margin: 0 auto; /* Centreert de tekstcontainer */
+}
+
+@media (max-width: 564px) {
+  #text-container {
+    width: 90%; /* Geeft wat ruimte aan de zijkanten op kleinere schermen */
+  }
 }
 
 
@@ -61,4 +68,3 @@ a:active {
   text-decoration: none; 
   color: rgb(158, 30, 30);
 }
-

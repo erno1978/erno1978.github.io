@@ -22,19 +22,24 @@
 
 	<script>
 		function switchLanguage(language) {
-			const textEN = "* &nbsp;Freelance developer / cybersecurity specialist<br>" +
-				"* &nbsp;Result-oriented<br>" +
-				"* &nbsp;Communicatively strong<br>" +
-				"* &nbsp;Makes the abstract concrete<br>" +
-				"* &nbsp;Can also create fonts like this one :-)<br>" +
-				"* &nbsp;...and also fun to work with!<br>";
 
-			const textNL = "* &nbsp;Freelance developer / cybersecurity specialist<br>" +
-				"* &nbsp;Resultaatgericht<br>" +
-				"* &nbsp;Communicatief<br>" +
-				"* &nbsp;Maakt abstract concreet<br>" +
-				"* &nbsp;Kan ook lettertypes maken zoals deze :-)<br>" +
-				"* &nbsp;...en ook leuk om mee samen te werken!<br>";
+			const textEN = "<ul>" +
+				"<li>Freelance developer / cybersecurity specialist</li>" +
+				"<li>Result-oriented</li>" +
+				"<li>Communicatively strong</li>" +
+				"<li>Makes the abstract concrete</li>" +
+				"<li>Fun to work with</li>" +
+				"<li>...and can also create fonts like this one :-)</li>" +
+				"</ul>";
+
+			const textNL = "<ul>" +
+				"<li>Freelance developer / cybersecurity specialist</li>" +
+				"<li>Resultaatgericht</li>" +
+				"<li>Communicatief</li>" +
+				"<li>Maakt abstract concreet</li>" +
+				"<li>Leuk om mee samen te werken</li>" +
+				"<li>...en kan ook lettertypes maken zoals deze :-)</li>" +
+				"</ul>";
 
 			if (language === 'EN') {
 				document.getElementById('text').innerHTML = textEN;
@@ -53,34 +58,32 @@
 </head>
 
 <body>
+
 	<body onload="switchLanguage('NL')"></body>
 	<br>
 	<div>
 		<div>
 			<p align="center">
-				<a href="#" onclick="switchLanguage('NL')">Nederlands</a> |
-				<a href="#" onclick="switchLanguage('EN')">English</a>
+				<a href="#" onclick="switchLanguage('NL')" class="language-link">Nederlands</a> |
+				<a href="#" onclick="switchLanguage('EN')" class="language-link">English</a>
 			</p>
 		</div>
 		<div>
 
 			<p align="center">
 				<img id="ernstig" src="img/headerNL.png" style="max-width:90%; max-height:20%">
-				<br><br>
+
 
 			<div id="text-container" style="text-align: center;">
 				<div id="text" style="text-align: left; display: inline-block;">
-
-				</div>
-				<div>
 				</div>
 
 				<div style="margin-top: 2%">
 					<p align="center">
-						<a href="mailto:ernst@ernstig.com"><img src="img/mail.png" width="4%"></a>
+						<a href="mailto:ernst@ernstig.com" class="contact-link"><img src="img/mail.png" width="4%"></a>
 						&nbsp;&nbsp;
-						<a href="https://www.linkedin.com/in/ernstnoorlander"><img src="img/linkedin.png"
-								width="4%"></a>
+						<a href="https://www.linkedin.com/in/ernstnoorlander" class="contact-link"><img src="img/linkedin.png" width="4%"></a>
+						
 					</p>
 				</div>
 </body>

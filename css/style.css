@@ -29,12 +29,14 @@ img#ernstig {
 }
 
 
+
+
 html,body,div,span,h1,h2,h3,h4,h5,h6,p,address,img,tr,th,td,header{
   margin:0;
   padding:0;
   border:0;
   outline:0;
-  font-size:110%;
+  font-size:118%;
   vertical-align:baseline;
   background:transparent
 }
@@ -68,3 +70,29 @@ a:active {
   text-decoration: none; 
   color: rgb(158, 30, 30);
 }
+
+ul {
+  list-style-type: disc; /* Dit stelt het type opsommingsteken in */
+  padding-left: 20px; /* Geeft ruimte aan de linkerkant voor de bullets */
+}
+
+li {
+  margin-bottom: 5px; /* Geeft ruimte tussen de lijstitems */
+}
+
+a.language-link:hover { 
+  text-decoration: none; 
+  color: rgb(255, 255, 255);
+  background-color: rgb(1, 65, 1);
+}
+
+a.contact-link:hover {
+  color: inherit; /* Houdt de standaardtekstkleur */
+  background-color: transparent; /* Geen achtergrondkleurverandering */
+  text-decoration: none; /* Geen onderstreping */
+}
+
+body {
+  background: linear-gradient(to right, #a8d8a8, #a4b8a9, #a8d8a8);
+}
+

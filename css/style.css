@@ -28,9 +28,6 @@ img#ernstig {
   }
 }
 
-
-
-
 html,body,div,span,h1,h2,h3,h4,h5,h6,p,address,img,tr,th,td,header{
   margin:0;
   padding:0;
@@ -40,7 +37,6 @@ html,body,div,span,h1,h2,h3,h4,h5,h6,p,address,img,tr,th,td,header{
   vertical-align:baseline;
   background:transparent
 }
-
 
 html,body{ 
   line-height:1;
@@ -77,7 +73,7 @@ ul {
 }
 
 li {
-  margin-top: 15px; /* Geeft ruimte tussen de lijstitems */
+  margin-top: 8px; /* Geeft ruimte tussen de lijstitems */
   margin-bottom: 5px; /* Geeft ruimte tussen de lijstitems */
 }
 

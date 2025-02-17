@@ -1,36 +1,110 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Noorlander Island</title>
     <style>
-        body, html {
+        body,
+        html {
             margin: 0;
             padding: 0;
             height: 100%;
             display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #2b5fa4; /* Light blue background color, you can change this */
+            flex-direction: column;
+            background-color: #2b5fa4;
+            color: white;
+            font-family: 'Arial', sans-serif;
         }
 
         .island-container {
-            width: auto; /* Adjust as needed */
-            height: auto; /* Adjust as needed */
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
-.island-image {
-    max-width: 100%;
-    max-height: 100vh; /* Voeg deze regel toe */
-    height: auto;
-    display: block;
-}
+        .island-image {
+            max-width: 90%;
+            max-height: 80vh;
+            height: auto;
+            display: block;
+        }
+
+        .ondernemende-noorlanders {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .ondernemende-noorlanders h2 {
+            margin-bottom: 5px;
+        }
+
+        .ondernemingen {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center; /* Verticale centrering */
+        }
+
+        .onderneming {
+            margin: 10px;
+        }
+
+        .onderneming a {
+            color: #f0ad4e;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .scheidingsteken {
+            color: black;
+            margin: 0 10px;
+        }
+
+        .meedoen {
+            padding: 20px;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .meedoen a {
+            color: #f0ad4e;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .ondernemende-noorlanders,
+        .meedoen {
+            margin-top: 20px;
+        }
     </style>
 </head>
+
 <body>
     <div class="island-container">
-        <img class="island-image" src="your_image_path.png" alt="Noorlander Island">
+        <img class="island-image" src="island.png" alt="Noorlander Island">
     </div>
+
+    <div class="ondernemende-noorlanders">
+        <h2>(Ondernemende) Noorlanders</h2>
+        <div class="ondernemingen">
+            <div class="onderneming"><a href="https://www.praktijkbiobalans.nl">Praktijk Biobalans</a></div>
+            <span class="scheidingsteken">|</span>
+            <div class="onderneming"><a href="https://www.siepconnect.nl">SiepConnect</a></div>
+            <span class="scheidingsteken">|</span>
+            <div class="onderneming"><a href="https://www.rtpraktijkonderweg.nl">RT-Praktijk Onderweg</a></div>
+            <span class="scheidingsteken">|</span>
+            <div class="onderneming"><a href="https://www.noorlander.nl/jan">Jan's Pagina</a></div>
+            <span class="scheidingsteken">|</span>
+            <div class="onderneming"><a href="https://www.ernstig.com">Ernstig.com</a></div>
+            <span class="scheidingsteken">|</span>
+            <div class="onderneming"><a href="https://www.marblemanagement.nl/">Marble Management</a></div>
+        </div>
+        <p>Wil jij deel uitmaken van Noorlander Island, of je nu een ondernemer bent of niet? Neem contact met ons op via <a href="mailto:info@noorlander.nl" style="color: #f0ad4e; text-decoration: none; font-weight: bold;">info@noorlander.nl</a>.</p>
+    </div>
+
 </body>
+
 </html>

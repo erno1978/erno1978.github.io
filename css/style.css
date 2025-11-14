@@ -89,9 +89,9 @@ a.contact-link:hover {
   text-decoration: none; /* Geen onderstreping */
 }
 
-/* body {
-  background: linear-gradient(to left top, #83da83, #a4b8a9, #62b462);
-} */
+body {
+  background: linear-gradient(to left top, #ddeadd, #a4b8a9, #c5d7c5);
+}
 
 ul.sublist {
   list-style-type: square; /* Of 'none' als je geen bullets wilt */

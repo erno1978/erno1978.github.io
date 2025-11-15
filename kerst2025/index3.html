@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactieve Schuifpuzzel - Gelukkig 2025</title>
+    <style>
+        /* Consistent, kort en krachtig CSS */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        /* De container is nu vast 800x800, passend bij uw afbeelding */
+        #puzzle-container {
+            width: 800px; 
+            height: 800px;
+            display: grid;
+            border: 5px solid #0056b3;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Stijl voor elk tegelvakje */
+        .tile {
+            background-size: 800px 800px; /* De totale grootte van de 800x800 afbeelding */
+            cursor: pointer;
+            transition: transform 0.3s, opacity 0.3s; 
+            border: 1px solid #0056b3;
+            box-sizing: border-box; 
+        }
+
+        /* De lege tegel */
+        .empty {
+            background-image: none !important;
+            background-color: #eee; 
+            cursor: default;
+        }
+
+        #message {
+            margin-top: 30px;
+            font-size: 2em;
+            color: green;
+            font-weight: bold;
+            display: none;
+        }
+
+        /* Flexibele container voor de knoppen */
+        #controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        #controls button {
+            padding: 10px 15px;
+            font-size: 1em;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        /* Specifieke stijl voor de 'Help'-knop */
+        #solve-button {
+            background-color: #dc3545; /* Rood om de urgentie te benadrukken */
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Gelukkig 2025</h1>
+
+    <div id="puzzle-container">
+        </div>
+
+    <div id="controls">
+        <button id="shuffle-button">Opnieuw Schudden</button>
+        <button id="solve-button">Help mij, ik vind dit te moeilijk</button>
+        <button id="difficulty-button">Ik vind het te makkelijk (4x4)</button>
+    </div>
+
+    <div id="message">En een gelukkig nieuwjaar</div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.getElementById('puzzle-container');
+            const message = document.getElementById('message');
+            const shuffleButton = document.getElementById('shuffle-button');
+            const solveButton = document.getElementById('solve-button');
+            const difficultyButton = document.getElementById('difficulty-button');
+            
+            // Globale variabele voor de rastergrootte (standaard 3x3)
+            let size = 3; 
+            let tiles = []; // De tegels in de opgeloste staat (vaste volgorde)
+            let currentBoard = []; // De tegels in de huidige, geschudde staat
+
+            /**
+             * Genereert de puzzeltegels op basis van de huidige 'size' variabele.
+             */
+            function createTiles() {
+                container.innerHTML = '';
+                const totalTiles = size * size;
+                const tileSize = 800 / size; // Tegelgrootte in pixels (800px / 3 of 800px / 4)
+                
+                // Pas de CSS Grid aan op basis van de grootte
+                container.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
+                container.style.gridTemplateRows = `repeat(${size}, 1fr)`;
+
+                tiles = [];
+                for (let i = 0; i < totalTiles; i++) {
+                    const tile = document.createElement('div');
+                    tile.classList.add('tile');
+                    tile.dataset.index = i; // Correcte positie (0 t/m 8 of 0 t/m 15)
+                    
+                    if (i < totalTiles - 1) { 
+                        const row = Math.floor(i / size);
+                        const col = i % size;
+                        
+                        const backgroundX = -col * tileSize;
+                        const backgroundY = -row * tileSize;
+
+                        tile.style.backgroundImage = `url('kerst.jpg')`;
+                        tile.style.backgroundPosition = `${backgroundX}px ${backgroundY}px`;
+                        tile.addEventListener('click', handleTileClick);
+                    } else {
+                        tile.classList.add('empty');
+                    }
+                    tiles.push(tile);
+                }
+                currentBoard = Array.from(tiles);
+            }
+
+            /**
+             * Render de huidige tegels op het bord.
+             * @param {Array<HTMLElement>} array - De array van tegels.
+             */
+            function renderTiles(array) {
+                container.innerHTML = '';
+                array.forEach(tile => container.appendChild(tile));
+                currentBoard = Array.from(array);
+            }
+            
+            /**
+             * Controleert op oplosbaarheid (vereist voor oneven rasters zoals 3x3).
+             * Voor even rasters (4x4) is de regel ingewikkelder; voor dit webvoorbeeld schudden we.
+             * @param {Array<HTMLElement>} array - De array van tegels.
+             * @returns {boolean} True als de puzzel oplosbaar is of als het een 4x4 is (we nemen de gok).
+             */
+            function isSolvable(array) {
+                if (size % 2 === 0) {
+                    // Voor even rasters is de regel complex. We schudden gewoon en nemen het risico.
+                    return true; 
+                }
+
+                // Oplosbaarheidscheck voor oneven rasters (3x3)
+                let inversions = 0;
+                const tileIndices = array
+                    .filter(tile => !tile.classList.contains('empty'))
+                    .map(tile => parseInt(tile.dataset.index));
+
+                for (let i = 0; i < tileIndices.length; i++) {
+                    for (let j = i + 1; j < tileIndices.length; j++) {
+                        if (tileIndices[i] > tileIndices[j]) {
+                            inversions++;
+                        }
+                    }
+                }
+                return inversions % 2 === 0;
+            }
+
+            /**
+             * Schuift de tegels.
+             */
+            function shuffle() {
+                message.style.display = 'none';
+                container.style.border = '5px solid #0056b3';
+                
+                let shuffledTiles;
+                const totalTiles = size * size;
+
+                do {
+                    // Pak alle tegels behalve de lege tegel
+                    shuffledTiles = tiles.slice(0, totalTiles - 1)
+                        .sort(() => Math.random() - 0.5);
+                    
+                    // Plaats de lege tegel (die de hoogste index heeft) terug op de laatste positie
+                    const emptyTile = tiles[totalTiles - 1];
+                    shuffledTiles.push(emptyTile);
+                } while (!isSolvable(shuffledTiles)); // Zorg voor oplosbaarheid (alleen voor 3x3)
+
+                renderTiles(shuffledTiles); 
+            }
+            
+            /**
+             * Maakt de puzzel direct opgelost ("Help"-knop).
+             */
+            function solvePuzzle() {
+                // Render de tegels in de opgeloste volgorde
+                renderTiles(tiles); 
+                handleSolved();
+            }
+
+            /**
+             * Verhoogt de moeilijkheidsgraad naar 4x4.
+             */
+            function increaseDifficulty() {
+                if (size === 3) {
+                    size = 4;
+                    difficultyButton.textContent = "Terug naar 3x3";
+                    
+                    // Reset, maak nieuwe tegels en schud opnieuw
+                    createTiles();
+                    shuffle();
+                } else if (size === 4) {
+                    // Optie om terug te keren naar 3x3
+                    size = 3;
+                    difficultyButton.textContent = "Ik vind het te makkelijk (4x4)";
+                    createTiles();
+                    shuffle();
+                }
+            }
+
+            /**
+             * Bepaalt of een tegel kan bewegen (naast de lege tegel).
+             */
+            function canMove(tileIndex, emptyIndex) {
+                const tileRow = Math.floor(tileIndex / size);
+                const tileCol = tileIndex % size;
+                const emptyRow = Math.floor(emptyIndex / size);
+                const emptyCol = emptyIndex % size;
+
+                const sameRow = tileRow === emptyRow && Math.abs(tileCol - emptyCol) === 1;
+                const sameCol = tileCol === emptyCol && Math.abs(tileRow - emptyRow) === 1;
+
+                return sameRow || sameCol;
+            }
+
+            /**
+             * Wisselt twee elementen in de array en render de nieuwe staat.
+             */
+            function swapTiles(index1, index2) {
+                [currentBoard[index1], currentBoard[index2]] = [currentBoard[index2], currentBoard[index1]];
+                renderTiles(currentBoard);
+            }
+
+            /**
+             * Verwerkt de klik op een tegel.
+             */
+            function handleTileClick(event) {
+                const clickedTile = event.currentTarget;
+                const tileIndex = currentBoard.indexOf(clickedTile);
+                const emptyIndex = currentBoard.findIndex(tile => tile.classList.contains('empty'));
+
+                if (canMove(tileIndex, emptyIndex)) {
+                    swapTiles(tileIndex, emptyIndex);
+
+                    if (isSolved()) {
+                        handleSolved();
+                    }
+                }
+            }
+
+            /**
+             * Controleert of de puzzel is opgelost.
+             */
+            function isSolved() {
+                const totalTiles = size * size;
+                return currentBoard.every((tile, index) => {
+                    if (tile.classList.contains('empty')) {
+                        return index === totalTiles - 1;
+                    }
+                    return parseInt(tile.dataset.index) === index;
+                });
+            }
+
+            /**
+             * Acties wanneer de puzzel is opgelost.
+             */
+            function handleSolved() {
+                message.style.display = 'block';
+                container.style.border = '5px solid green';
+            }
+
+            // --- Initialisatie & Knoppen ---
+            createTiles(); 
+            shuffle(); 
+
+            shuffleButton.addEventListener('click', shuffle);
+            solveButton.addEventListener('click', solvePuzzle); // Nieuwe Help-knop
+            difficultyButton.addEventListener('click', increaseDifficulty); // Nieuwe Moeilijkheidsgraad-knop
+        });
+    </script>
+</body>
+</html>

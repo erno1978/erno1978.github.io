@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schuifpuzzel - Gelukkig 2025</title>
+    <style>
+        /* Snel, Helder en Duidelijk CSS */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        /* Container voor de puzzel */
+        #puzzle-container {
+            width: 600px; /* Grootte van het 3x3 raster */
+            height: 600px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            border: 5px solid #0056b3;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        /* Stijl voor elk tegelvakje */
+        .tile {
+            width: 100%;
+            height: 100%;
+            background-size: 600px 600px; /* De totale grootte van de achtergrondafbeelding */
+            cursor: pointer;
+            transition: transform 0.3s, opacity 0.3s; /* Animatie voor soepeler schuiven */
+            border: 1px solid #0056b3;
+            box-sizing: border-box; /* Zorgt dat de rand binnen de tegel valt */
+        }
+
+        /* De lege tegel (laatste tegel in 3x3) */
+        .empty {
+            background-image: none !important;
+            background-color: #eee; /* Lichtgrijze achtergrond voor het lege vakje */
+            cursor: default;
+        }
+
+        #message {
+            margin-top: 30px;
+            font-size: 2em;
+            color: green;
+            font-weight: bold;
+            display: none; /* Standaard verborgen */
+        }
+
+        /* Overlay om de oplossing te tonen */
+        #solved-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('kerst.jpg');
+            background-size: cover;
+            background-position: center;
+            display: none; /* Standaard verborgen */
+            z-index: 10;
+        }
+
+        /* Knop om opnieuw te schudden */
+        #shuffle-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1.1em;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Gelukkig 2025</h1>
+
+    <div id="puzzle-container">
+        </div>
+
+    <button id="shuffle-button">Opnieuw Schudden</button>
+
+    <div id="message">En een gelukkig nieuwjaar</div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.getElementById('puzzle-container');
+            const message = document.getElementById('message');
+            const shuffleButton = document.getElementById('shuffle-button');
+            const size = 3; // 3x3 raster
+            const totalTiles = size * size;
+            const tileSize = 600 / size; // Tegelgrootte in pixels (600px / 3 = 200px)
+            let tiles = [];
+            let currentBoard = [];
+
+            /**
+             * Genereert de puzzeltegels en stelt hun correcte achtergrondpositie in.
+             */
+            function createTiles() {
+                container.innerHTML = '';
+                tiles = [];
+                for (let i = 0; i < totalTiles; i++) {
+                    const tile = document.createElement('div');
+                    tile.classList.add('tile');
+                    tile.dataset.index = i; // De correcte positie (0 t/m 8)
+                    
+                    if (i < totalTiles - 1) { // De laatste tegel (index 8) is leeg
+                        const row = Math.floor(i / size);
+                        const col = i % size;
+                        
+                        // Bereken de achtergrondpositie voor de uitsnede van de afbeelding
+                        const backgroundX = -col * tileSize;
+                        const backgroundY = -row * tileSize;
+
+                        tile.style.backgroundImage = `url('kerst.jpg')`;
+                        tile.style.backgroundPosition = `${backgroundX}px ${backgroundY}px`;
+                        tile.addEventListener('click', handleTileClick);
+                    } else {
+                        tile.classList.add('empty');
+                    }
+                    tiles.push(tile);
+                    container.appendChild(tile);
+                }
+                currentBoard = Array.from(tiles); // Initialiseer de huidige staat
+            }
+
+            /**
+             * Vanaf een schudden tegelarray, plaatst de tegels in de container.
+             * @param {Array<HTMLElement>} shuffledTiles - De geschudde array.
+             */
+            function renderTiles(shuffledTiles) {
+                container.innerHTML = '';
+                shuffledTiles.forEach(tile => container.appendChild(tile));
+                currentBoard = Array.from(shuffledTiles);
+            }
+
+            /**
+             * Controleert of een 8-puzzel oplosbaar is (inversies).
+             * Aangezien de gridbreedte oneven is (3), is de puzzel oplosbaar als het aantal inversies even is.
+             * Een inversie is een paar tegels (A, B) waarbij A vóór B staat, maar de correcte index van A groter is dan B.
+             * @param {Array<HTMLElement>} array - De array van tegels.
+             * @returns {boolean} True als de puzzel oplosbaar is.
+             */
+            function isSolvable(array) {
+                let inversions = 0;
+                const tileIndices = array
+                    .filter(tile => !tile.classList.contains('empty'))
+                    .map(tile => parseInt(tile.dataset.index));
+
+                for (let i = 0; i < tileIndices.length; i++) {
+                    for (let j = i + 1; j < tileIndices.length; j++) {
+                        if (tileIndices[i] > tileIndices[j]) {
+                            inversions++;
+                        }
+                    }
+                }
+                return inversions % 2 === 0;
+            }
+
+            /**
+             * Schuift de tegels tot er een oplosbare staat is bereikt.
+             */
+            function shuffle() {
+                let shuffledTiles;
+                do {
+                    // Maak een kopie van de tegels (zonder de lege tegel, die blijft op zijn plaats 8)
+                    shuffledTiles = tiles.slice(0, totalTiles - 1)
+                        .sort(() => Math.random() - 0.5);
+                    
+                    // Plaats de lege tegel (index 8) terug op de laatste positie voor de oplosbaarheidscheck
+                    const emptyTile = tiles[totalTiles - 1];
+                    shuffledTiles.push(emptyTile);
+                } while (!isSolvable(shuffledTiles)); // Blijf schudden tot het oplosbaar is
+
+                // Nu we een oplosbare volgorde hebben, renderen we deze
+                renderTiles(shuffledTiles);
+                message.style.display = 'none'; // Verberg het succesbericht
+                container.style.border = '5px solid #0056b3'; // Reset de randkleur
+            }
+
+            /**
+             * Zoekt de index van de lege tegel in de huidige bordstaat.
+             * @returns {number} De index (0-8) van de lege tegel.
+             */
+            function getEmptyTileIndex() {
+                return currentBoard.findIndex(tile => tile.classList.contains('empty'));
+            }
+
+            /**
+             * Bepaalt of een tegel kan bewegen (naast de lege tegel).
+             * @param {number} tileIndex - De index (0-8) van de geklikte tegel.
+             * @param {number} emptyIndex - De index (0-8) van de lege tegel.
+             * @returns {boolean} True als de tegel kan bewegen.
+             */
+            function canMove(tileIndex, emptyIndex) {
+                const tileRow = Math.floor(tileIndex / size);
+                const tileCol = tileIndex % size;
+                const emptyRow = Math.floor(emptyIndex / size);
+                const emptyCol = emptyIndex % size;
+
+                // Kan bewegen als het in dezelfde rij zit EN kolommen 1 stap van elkaar zijn
+                const sameRow = tileRow === emptyRow && Math.abs(tileCol - emptyCol) === 1;
+                // Kan bewegen als het in dezelfde kolom zit EN rijen 1 stap van elkaar zijn
+                const sameCol = tileCol === emptyCol && Math.abs(tileRow - emptyRow) === 1;
+
+                return sameRow || sameCol;
+            }
+
+            /**
+             * Wisselt twee elementen in de array en render de nieuwe staat.
+             * @param {number} index1 - Index van het eerste element.
+             * @param {number} index2 - Index van het tweede element.
+             */
+            function swapTiles(index1, index2) {
+                [currentBoard[index1], currentBoard[index2]] = [currentBoard[index2], currentBoard[index1]];
+                renderTiles(currentBoard); // Render de nieuwe volgorde
+            }
+
+            /**
+             * Verwerkt de klik op een tegel.
+             */
+            function handleTileClick(event) {
+                const clickedTile = event.currentTarget;
+                const tileIndex = currentBoard.indexOf(clickedTile);
+                const emptyIndex = getEmptyTileIndex();
+
+                if (canMove(tileIndex, emptyIndex)) {
+                    // Wissel de geklikte tegel met de lege tegel
+                    swapTiles(tileIndex, emptyIndex);
+
+                    if (isSolved()) {
+                        handleSolved();
+                    }
+                }
+            }
+
+            /**
+             * Controleert of de puzzel is opgelost.
+             * @returns {boolean} True als elke tegel op zijn correcte positie staat.
+             */
+            function isSolved() {
+                return currentBoard.every((tile, index) => {
+                    // De 'empty' tegel (de laatste) moet ook op de laatste positie staan.
+                    if (tile.classList.contains('empty')) {
+                        return index === totalTiles - 1;
+                    }
+                    // Voor alle andere tegels, moet de huidige positie (index)
+                    // overeenkomen met de opgeslagen correcte positie (dataset.index)
+                    return parseInt(tile.dataset.index) === index;
+                });
+            }
+
+            /**
+             * Acties wanneer de puzzel is opgelost.
+             */
+            function handleSolved() {
+                message.style.display = 'block';
+                container.style.border = '5px solid green'; // Een visuele indicatie
+            }
+
+            // --- Initialisatie ---
+            createTiles(); // Maak de tegels aan in de opgeloste staat
+            shuffle();    // Schud de puzzel onmiddellijk
+
+            shuffleButton.addEventListener('click', shuffle);
+
+        });
+    </script>
+</body>
+</html>

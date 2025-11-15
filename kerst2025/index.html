@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎄 Kerst Kraskaart - Beste Wensen!</title>
+    <style>
+        /*
+         * De Styling (CSS)
+         */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            color: #333;
+        }
+
+        #game-title {
+            color: #b30000; /* Kerstrood */
+            margin-bottom: 20px;
+        }
+
+        #scratch-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 10px;
+            padding: 20px;
+            background-color: #006600; /* Kerstgroen */
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .tile {
+            width: 100px;
+            height: 100px;
+            background-color: #c0c0c0; /* Zilver/kraslaag */
+            border: 2px solid #fff;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            cursor: pointer;
+            user-select: none;
+            transition: background-color 0.3s;
+            position: relative;
+            overflow: hidden;
+            font-weight: bold;
+            color: transparent; /* Verberg het symbool initieel */
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
+        }
+
+        .tile::after {
+            content: "KRAS";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #a00000; /* Donkerrood voor kraslaag */
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 16px;
+            transition: opacity 0.4s ease-in-out;
+            opacity: 1;
+            z-index: 10;
+        }
+
+        .tile.scratched {
+            background-color: #fff; /* Wit na krassen */
+            color: #b30000; /* Rood voor symbool */
+            cursor: default;
+        }
+
+        .tile.scratched::after {
+            opacity: 0; /* Verberg de kraslaag */
+        }
+
+        #message {
+            margin-top: 30px;
+            font-size: 24px;
+            font-weight: bold;
+            min-height: 30px; /* Ruimte reserveren */
+        }
+        
+        .win {
+            color: #006600; /* Groen bij winst */
+        }
+        
+        .lose {
+            color: #b30000; /* Rood bij verlies */
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1 id="game-title">✨ Kraskaart voor de Beste Wensen! ✨</h1>
+    
+    <div id="scratch-grid">
+        </div>
+    
+    <p id="message">Kras drie vakjes open om te kijken of u de Beste Wensen wint!</p>
+    
+    <script>
+        //
+        // De Logica (JavaScript)
+        //
+        
+        const symbols = ['🎄', '🎁', '⭐', '🔔', '🎅']; // Beschikbare symbolen
+        const winningSymbol = symbols[Math.floor(Math.random() * 3)]; // Kies één van de eerste 3 als winnend symbool (maakt winnen iets waarschijnlijker)
+        const totalTiles = 9;
+        const scratchGrid = document.getElementById('scratch-grid');
+        const messageElement = document.getElementById('message');
+        let scratchedCount = 0;
+        let isGameOver = false;
+
+        /**
+         * Genereert de 9 symbolen, garandeert 3 dezelfde (de 'winnaar').
+         * @returns {string[]} Een array van 9 symbolen.
+         */
+        function generateSymbols() {
+            // Stap 1: Bepaal de drie posities van het winnende symbool
+            let winPositions = [];
+            while (winPositions.length < 3) {
+                const pos = Math.floor(Math.random() * totalTiles);
+                if (!winPositions.includes(pos)) {
+                    winPositions.push(pos);
+                }
+            }
+            
+            // Stap 2: Vul de symbolen
+            const generated = new Array(totalTiles);
+            for (let i = 0; i < totalTiles; i++) {
+                if (winPositions.includes(i)) {
+                    generated[i] = winningSymbol;
+                } else {
+                    // Kies een ander symbool (niet de winnaar)
+                    let nonWinningSymbols = symbols.filter(s => s !== winningSymbol);
+                    const randomNonWinner = nonWinningSymbols[Math.floor(Math.random() * nonWinningSymbols.length)];
+                    generated[i] = randomNonWinner;
+                }
+            }
+            
+            return generated;
+        }
+
+        const tileSymbols = generateSymbols();
+
+        /**
+         * Maakt de HTML-tegels en voegt ze toe aan het raster.
+         */
+        function createTiles() {
+            tileSymbols.forEach((symbol, index) => {
+                const tile = document.createElement('div');
+                tile.classList.add('tile');
+                tile.innerHTML = symbol; // Zet het symbool in de tegel
+                tile.dataset.symbol = symbol; // Bewaar het symbool in een data-attribuut
+                tile.dataset.index = index;
+
+                tile.addEventListener('click', handleTileClick);
+                scratchGrid.appendChild(tile);
+            });
+        }
+        
+        /**
+         * Afhandeling van een klik op een tegel.
+         * @param {Event} event - Het klik-evenement.
+         */
+        function handleTileClick(event) {
+            if (isGameOver) return;
+
+            const tile = event.currentTarget;
+            if (tile.classList.contains('scratched')) return;
+            
+            // Kras open
+            tile.classList.add('scratched');
+            scratchedCount++;
+
+            if (scratchedCount === totalTiles) {
+                checkWinCondition();
+            } else {
+                messageElement.textContent = `Nog ${totalTiles - scratchedCount} vakje(s) te krassen.`;
+            }
+        }
+        
+        /**
+         * Controleert of de winnende combinatie is behaald.
+         */
+        function checkWinCondition() {
+            isGameOver = true;
+            
+            // We kijken of er 3 dezelfde van het winnende symbool zijn,
+            // wat dankzij generateSymbols altijd zo is, maar dit maakt de check duidelijk.
+            const symbolsFound = Array.from(document.querySelectorAll('.tile.scratched'))
+                                      .map(tile => tile.dataset.symbol);
+
+            const winningMatches = symbolsFound.filter(s => s === winningSymbol).length;
+
+            if (winningMatches === 3) {
+                messageElement.classList.add('win');
+                messageElement.innerHTML = `🎉 **Gefeliciteerd!** U heeft 3x ${winningSymbol} en wint de **Beste Wensen**! 🎅`;
+            } else {
+                // Deze tak zou niet bereikt moeten worden met de huidige `generateSymbols` logica
+                // (omdat we 3 winnaars garanderen), maar het is een fallback.
+                messageElement.classList.classList.add('lose');
+                messageElement.innerHTML = `Helaas, geen 3 dezelfde symbolen. Maar alsnog: **Beste Wensen!** 🎁`;
+            }
+        }
+
+        // Start het spel
+        createTiles();
+    </script>
+</body>
+</html>

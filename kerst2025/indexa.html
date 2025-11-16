@@ -30,7 +30,9 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin: 20px;
+            justify-content: center;
+            margin: 0;
+            padding: 10px;
             /* background.png als pagina-achtergrond */
             background-image: url('background.png');
             background-size: cover; 
@@ -39,6 +41,7 @@
             
             color: #fff;
             min-height: 100vh;
+            box-sizing: border-box;
         }
 
         /* Overlay om de achtergrondafbeelding lichter/vager te maken */
@@ -60,15 +63,15 @@
             /* Kleur donkerblauw */
             color: #000080; 
             text-align: center;
-            margin-bottom: 20px;
+            margin: 10px 0;
         }
 
         /* RESPONSIVITEIT & PUZZEL CONTAINER */
         #puzzle-container {
             width: 90vw; 
-            max-width: 800px;
+            max-width: 600px;
             height: 90vw; 
-            max-height: 800px;
+            max-height: 600px;
             display: grid;
             /* Rand donkerblauw */
             border: 5px solid #000080; 
@@ -95,7 +98,7 @@
         }
         
         #message {
-            margin-top: 30px;
+            margin-top: 15px;
             /* Ongeveer 50% groter */
             font-size: 2.25em; 
             /* Kleur donkerblauw */
@@ -109,7 +112,7 @@
 
         /* Knoppen container */
         #controls {
-            margin-top: 20px;
+            margin-top: 15px;
             display: flex;
             flex-wrap: wrap; 
             justify-content: center;
@@ -191,12 +194,12 @@
                         const row = Math.floor(imageIndex / size);
                         const col = imageIndex % size;
                         
-                        // FIXED: Calculate position as percentage to show correct portion
-                        const backgroundX = (col / (size - 1)) * 100;
-                        const backgroundY = (row / (size - 1)) * 100;
+                        // Use calc() to position based on grid fractions
+                        const backgroundX = `calc(${col} * 100% / ${size - 1})`;
+                        const backgroundY = `calc(${row} * 100% / ${size - 1})`;
 
                         tile.style.backgroundImage = `url('kerst.jpg')`; 
-                        tile.style.backgroundPosition = `${backgroundX}% ${backgroundY}%`;
+                        tile.style.backgroundPosition = `${backgroundX} ${backgroundY}`;
                         tile.addEventListener('click', handleTileClick);
                         
                     } else {

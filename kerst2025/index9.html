@@ -191,9 +191,10 @@
                         const row = Math.floor(imageIndex / size);
                         const col = imageIndex % size;
                         
-                        // FIXED: Calculate position as percentage to show correct portion
-                        const backgroundX = (col / (size - 1)) * 100;
-                        const backgroundY = (row / (size - 1)) * 100;
+                        // FIXED: Use proper formula for percentage positioning
+                        // For N tiles, positions are 0%, 100/(N-1)%, 200/(N-1)%, etc.
+                        const backgroundX = size === 1 ? 0 : (col / (size - 1)) * 100;
+                        const backgroundY = size === 1 ? 0 : (row / (size - 1)) * 100;
 
                         tile.style.backgroundImage = `url('kerst.jpg')`; 
                         tile.style.backgroundPosition = `${backgroundX}% ${backgroundY}%`;

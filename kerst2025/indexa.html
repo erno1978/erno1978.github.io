@@ -61,7 +61,7 @@
             /* Ongeveer 50% groter */
             font-size: 2.5em; 
             /* Kleur donkerblauw */
-            color: #000080; 
+            color: #8f0000; 
             text-align: center;
             margin: 10px 0;
         }
@@ -74,7 +74,7 @@
             max-height: 600px;
             display: grid;
             /* Rand donkerblauw */
-            border: 5px solid #000080; 
+            border: 5px solid #072f17; 
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
             aspect-ratio: 1 / 1; 
         }
@@ -86,14 +86,14 @@
             cursor: pointer;
             transition: transform 0.3s, opacity 0.3s; 
             /* Rand donkerblauw */
-            border: 1px solid #000080; 
+            border: 1px solid #007a00; 
             box-sizing: border-box; 
         }
 
         /* De lege tegel is nu weer effen donker */
         .empty {
             background-image: none !important; 
-            background-color: #222; /* Donkere kleur */
+            background-color: #161616; /* Donkere kleur */
             cursor: default;
         }
         
@@ -102,7 +102,7 @@
             /* Ongeveer 50% groter */
             font-size: 2.25em; 
             /* Kleur donkerblauw */
-            color: #000080; 
+            color: hsl(0, 100%, 27%); 
             font-weight: bold;
             text-align: center;
             display: none;
@@ -123,8 +123,8 @@
             padding: 10px 15px;
             font-size: 1em;
             cursor: pointer;
-            background-color: #1e5e2e; 
-            color: #000080; 
+            background-color: #002a0a; 
+            color: #fc6060; 
             border: none;
             border-radius: 5px;
             white-space: nowrap;
@@ -133,7 +133,7 @@
         /* Specifieke stijl voor de 'Oplossing'-knop */
         #solve-button {
             background-color: #a71d31;
-            color: #000080; 
+            color: #ff0b0b; 
         }
     </style>
 </head>
@@ -172,7 +172,7 @@
             function createTiles() {
                 container.innerHTML = '';
                 message.style.display = 'none';
-                container.style.border = '5px solid #000080'; 
+                container.style.border = '5px solid #072f17'; 
                 container.classList.remove('solved-background'); 
                 const totalTiles = size * size;
                 

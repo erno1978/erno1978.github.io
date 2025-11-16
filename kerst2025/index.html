@@ -3,222 +3,336 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎄 Kerst Kraskaart - Beste Wensen!</title>
+    <title>Interactieve Schuifpuzzel - Fijne Feestdagen</title>
     <style>
-        /*
-         * De Styling (CSS)
-         */
+        /* CSS is hierin opgenomen */
+        /* AANGEPAST LETTERTYPE */
+        @font-face {
+            font-family: 'Erno2024';
+            src: url('../css/Erno2024.woff2') format('woff2'),
+                 url('../css/Erno2024.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        /* NIEUW LETTERTYPE: Eveline2024 */
+        @font-face {
+            font-family: 'Eveline2024';
+            src: url('../css/Eveline2024.woff2') format('woff2'),
+                 url('../css/Eveline2024.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        /* GLOBALE STIJL & ACHTERGROND */
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Erno2024', Arial, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 100vh;
             margin: 0;
-            background-color: #f0f0f0;
-            color: #333;
+            padding: 10px;
+            /* background.png als pagina-achtergrond */
+            background-image: url('background.png');
+            background-size: cover; 
+            background-attachment: fixed; 
+            background-color: #eee; /* Lichtere fallback kleur */
+            
+            color: #fff;
+            min-height: 100vh;
+            box-sizing: border-box;
         }
 
-        #game-title {
-            color: #b30000; /* Kerstrood */
-            margin-bottom: 20px;
-        }
-
-        #scratch-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 100px);
-            grid-template-rows: repeat(3, 100px);
-            gap: 10px;
-            padding: 20px;
-            background-color: #006600; /* Kerstgroen */
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .tile {
-            width: 100px;
-            height: 100px;
-            background-color: #c0c0c0; /* Zilver/kraslaag */
-            border: 2px solid #fff;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 40px;
-            cursor: pointer;
-            user-select: none;
-            transition: background-color 0.3s;
-            position: relative;
-            overflow: hidden;
-            font-weight: bold;
-            color: transparent; /* Verberg het symbool initieel */
-            text-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
-        }
-
-        .tile::after {
-            content: "KRAS";
-            position: absolute;
+        /* Overlay om de achtergrondafbeelding lichter/vager te maken */
+        body::before {
+            content: '';
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: #a00000; /* Donkerrood voor kraslaag */
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            font-size: 16px;
-            transition: opacity 0.4s ease-in-out;
-            opacity: 1;
-            z-index: 10;
+            /* Alpha-waarde op 0.9 voor witter/vager effect */
+            background-color: rgba(255, 255, 255, 0.9); 
+            z-index: -1; 
         }
 
-        .tile.scratched {
-            background-color: #fff; /* Wit na krassen */
-            color: #b30000; /* Rood voor symbool */
+        h1 {
+            /* Ongeveer 50% groter */
+            font-size: 2.5em; 
+            /* Kleur donkerblauw */
+            color: #8f0000; 
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        /* RESPONSIVITEIT & PUZZEL CONTAINER */
+        #puzzle-container {
+            width: 90vw; 
+            max-width: 600px;
+            height: 90vw; 
+            max-height: 600px;
+            display: grid;
+            /* Rand donkerblauw */
+            border: 5px solid #072f17; 
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            aspect-ratio: 1 / 1; 
+        }
+
+        /* Stijl voor elk tegelvakje */
+        .tile {
+            /* FIXED: Scale to full grid size, not individual tile */
+            background-size: calc(var(--grid-size) * 100%) calc(var(--grid-size) * 100%); 
+            cursor: pointer;
+            transition: transform 0.3s, opacity 0.3s; 
+            /* Rand donkerblauw */
+            border: 1px solid #007a00; 
+            box-sizing: border-box; 
+        }
+
+        /* De lege tegel is nu weer effen donker */
+        .empty {
+            background-image: none !important; 
+            background-color: #161616; /* Donkere kleur */
             cursor: default;
         }
-
-        .tile.scratched::after {
-            opacity: 0; /* Verberg de kraslaag */
-        }
-
+        
         #message {
-            margin-top: 30px;
-            font-size: 24px;
+            margin-top: 15px;
+            /* Ongeveer 50% groter */
+            font-size: 2.25em; 
+            /* Kleur donkerblauw */
+            color: hsl(0, 100%, 27%); 
             font-weight: bold;
-            min-height: 30px; /* Ruimte reserveren */
-        }
-        
-        .win {
-            color: #006600; /* Groen bij winst */
-        }
-        
-        .lose {
-            color: #b30000; /* Rood bij verlies */
+            text-align: center;
+            display: none;
+            /* GECORRIGEERD: Gebruik Eveline2024 lettertype */
+            font-family: 'Eveline2024', Arial, sans-serif; 
         }
 
+        /* Knoppen container */
+        #controls {
+            margin-top: 15px;
+            display: flex;
+            flex-wrap: wrap; 
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        #controls button {
+            padding: 10px 15px;
+            font-size: 1em;
+            cursor: pointer;
+            background-color: #002a0a; 
+            color: #fc6060; 
+            border: none;
+            border-radius: 5px;
+            white-space: nowrap;
+        }
+
+        /* Specifieke stijl voor de 'Oplossing'-knop */
+        #solve-button {
+            background-color: #a71d31;
+            color: #ff0b0b; 
+        }
     </style>
 </head>
 <body>
 
-    <h1 id="game-title">✨ Kraskaart voor de Beste Wensen! ✨</h1>
-    
-    <div id="scratch-grid">
-        </div>
-    
-    <p id="message">Kras drie vakjes open om te kijken of u de Beste Wensen wint!</p>
-    
+    <h1>We wensen jullie fijne feestdagen...</h1>
+
+    <div id="puzzle-container">
+    </div>
+
+    <div id="controls">
+        <button id="shuffle-button">Opnieuw schudden!</button>
+        <button id="difficulty-toggle">Dit is te makkelijk!</button> 
+        <button id="solve-button">Help, ik kom er echt niet uit!</button>
+    </div>
+
+    <div id="message">... en een jaar waarin alle stukjes op hun plek vallen!</div>
+
     <script>
-        //
-        // De Logica (JavaScript)
-        //
-        
-        const symbols = ['🎄', '🎁', '⭐', '🔔', '🎅']; // Beschikbare symbolen
-        const winningSymbol = symbols[Math.floor(Math.random() * 3)]; // Kies één van de eerste 3 als winnend symbool (maakt winnen iets waarschijnlijker)
-        const totalTiles = 9;
-        const scratchGrid = document.getElementById('scratch-grid');
-        const messageElement = document.getElementById('message');
-        let scratchedCount = 0;
-        let isGameOver = false;
+        // JavaScript is hierin opgenomen
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.getElementById('puzzle-container');
+            const message = document.getElementById('message');
+            const shuffleButton = document.getElementById('shuffle-button');
+            const solveButton = document.getElementById('solve-button');
+            const difficultyToggle = document.getElementById('difficulty-toggle');
+            
+            let size = 3; 
+            let tiles = []; 
+            let currentBoard = []; 
+            let emptyTileIndexInSolvedState = 0; 
 
-        /**
-         * Genereert de 9 symbolen, garandeert 3 dezelfde (de 'winnaar').
-         * @returns {string[]} Een array van 9 symbolen.
-         */
-        function generateSymbols() {
-            // Stap 1: Bepaal de drie posities van het winnende symbool
-            let winPositions = [];
-            while (winPositions.length < 3) {
-                const pos = Math.floor(Math.random() * totalTiles);
-                if (!winPositions.includes(pos)) {
-                    winPositions.push(pos);
+            /**
+             * Genereert de puzzeltegels.
+             */
+            function createTiles() {
+                container.innerHTML = '';
+                message.style.display = 'none';
+                container.style.border = '5px solid #072f17'; 
+                container.classList.remove('solved-background'); 
+                const totalTiles = size * size;
+                
+                // Bepaal de index van de lege tegel in de opgeloste staat (rechtsboven)
+                emptyTileIndexInSolvedState = size - 1; 
+
+                container.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
+                container.style.gridTemplateRows = `repeat(${size}, 1fr)`;
+                container.style.setProperty('--grid-size', size);
+
+                tiles = [];
+                for (let i = 0; i < totalTiles; i++) {
+                    const tile = document.createElement('div');
+                    tile.classList.add('tile');
+                    tile.dataset.index = i;
+                    
+                    if (i !== emptyTileIndexInSolvedState) { 
+                        const imageIndex = i; 
+                        const row = Math.floor(imageIndex / size);
+                        const col = imageIndex % size;
+                        
+                        // Use calc() to position based on grid fractions
+                        const backgroundX = `calc(${col} * 100% / ${size - 1})`;
+                        const backgroundY = `calc(${row} * 100% / ${size - 1})`;
+
+                        tile.style.backgroundImage = `url('kerst.jpg')`; 
+                        tile.style.backgroundPosition = `${backgroundX} ${backgroundY}`;
+                        tile.addEventListener('click', handleTileClick);
+                        
+                    } else {
+                        tile.classList.add('empty'); 
+                    }
+                    tiles.push(tile);
                 }
+                currentBoard = Array.from(tiles);
+            }
+
+            /**
+             * Render de huidige tegels op het bord.
+             */
+            function renderTiles(array) {
+                container.innerHTML = '';
+                array.forEach(tile => container.appendChild(tile));
+                currentBoard = Array.from(array);
             }
             
-            // Stap 2: Vul de symbolen
-            const generated = new Array(totalTiles);
-            for (let i = 0; i < totalTiles; i++) {
-                if (winPositions.includes(i)) {
-                    generated[i] = winningSymbol;
+            /**
+             * Controleert op oplosbaarheid.
+             */
+            function isSolvable(array) {
+                let inversions = 0;
+                const tileIndices = array
+                    .filter(tile => !tile.classList.contains('empty'))
+                    .map(tile => parseInt(tile.dataset.index));
+
+                for (let i = 0; i < tileIndices.length; i++) {
+                    for (let j = i + 1; j < tileIndices.length; j++) {
+                        if (tileIndices[i] > tileIndices[j]) {
+                            inversions++;
+                        }
+                    }
+                }
+                
+                if (size % 2 !== 0) {
+                    return inversions % 2 === 0;
+                }
+                return true; 
+            }
+
+            /**
+             * Schuift de tegels.
+             */
+            function shuffle() {
+                let shuffledTiles;
+                
+                do {
+                    shuffledTiles = tiles.slice().sort(() => Math.random() - 0.5);
+                } while (!isSolvable(shuffledTiles)); 
+
+                renderTiles(shuffledTiles); 
+            }
+
+            /**
+             * Schakelt de moeilijkheidsgraad tussen 3x3 en 4x4.
+             */
+            function toggleDifficulty() {
+                if (size === 3) {
+                    size = 4;
+                    difficultyToggle.textContent = "Oei, ik heb mezelf overschat!";
                 } else {
-                    // Kies een ander symbool (niet de winnaar)
-                    let nonWinningSymbols = symbols.filter(s => s !== winningSymbol);
-                    const randomNonWinner = nonWinningSymbols[Math.floor(Math.random() * nonWinningSymbols.length)];
-                    generated[i] = randomNonWinner;
+                    size = 3;
+                    difficultyToggle.textContent = "Dit is te makkelijk!";
+                }
+                
+                createTiles();
+                shuffle();
+            }
+            
+            /**
+             * Maakt de puzzel direct opgelost ("Help"-knop).
+             */
+            function solvePuzzle() {
+                renderTiles(tiles); 
+                handleSolved();
+            }
+
+            function canMove(tileIndex, emptyIndex) {
+                const tileRow = Math.floor(tileIndex / size);
+                const tileCol = tileIndex % size;
+                const emptyRow = Math.floor(emptyIndex / size);
+                const emptyCol = emptyIndex % size;
+                const sameRow = tileRow === emptyRow && Math.abs(tileCol - emptyCol) === 1;
+                const sameCol = tileCol === emptyCol && Math.abs(tileRow - emptyRow) === 1;
+                return sameRow || sameCol;
+            }
+
+            function swapTiles(index1, index2) {
+                [currentBoard[index1], currentBoard[index2]] = [currentBoard[index2], currentBoard[index1]];
+                renderTiles(currentBoard);
+            }
+
+            function handleTileClick(event) {
+                const clickedTile = event.currentTarget;
+                const tileIndex = currentBoard.indexOf(clickedTile);
+                const emptyIndex = currentBoard.findIndex(tile => tile.classList.contains('empty'));
+                if (canMove(tileIndex, emptyIndex)) {
+                    swapTiles(tileIndex, emptyIndex);
+                    if (isSolved()) {
+                        handleSolved();
+                    }
                 }
             }
-            
-            return generated;
-        }
 
-        const tileSymbols = generateSymbols();
-
-        /**
-         * Maakt de HTML-tegels en voegt ze toe aan het raster.
-         */
-        function createTiles() {
-            tileSymbols.forEach((symbol, index) => {
-                const tile = document.createElement('div');
-                tile.classList.add('tile');
-                tile.innerHTML = symbol; // Zet het symbool in de tegel
-                tile.dataset.symbol = symbol; // Bewaar het symbool in een data-attribuut
-                tile.dataset.index = index;
-
-                tile.addEventListener('click', handleTileClick);
-                scratchGrid.appendChild(tile);
-            });
-        }
-        
-        /**
-         * Afhandeling van een klik op een tegel.
-         * @param {Event} event - Het klik-evenement.
-         */
-        function handleTileClick(event) {
-            if (isGameOver) return;
-
-            const tile = event.currentTarget;
-            if (tile.classList.contains('scratched')) return;
-            
-            // Kras open
-            tile.classList.add('scratched');
-            scratchedCount++;
-
-            if (scratchedCount === totalTiles) {
-                checkWinCondition();
-            } else {
-                messageElement.textContent = `Nog ${totalTiles - scratchedCount} vakje(s) te krassen.`;
+            /**
+             * Controleert of de puzzel is opgelost (lege tegel rechtsboven).
+             */
+            function isSolved() {
+                return currentBoard.every((tile, index) => {
+                    if (tile.classList.contains('empty')) {
+                        return index === emptyTileIndexInSolvedState; 
+                    }
+                    return parseInt(tile.dataset.index) === index;
+                });
             }
-        }
-        
-        /**
-         * Controleert of de winnende combinatie is behaald.
-         */
-        function checkWinCondition() {
-            isGameOver = true;
-            
-            // We kijken of er 3 dezelfde van het winnende symbool zijn,
-            // wat dankzij generateSymbols altijd zo is, maar dit maakt de check duidelijk.
-            const symbolsFound = Array.from(document.querySelectorAll('.tile.scratched'))
-                                      .map(tile => tile.dataset.symbol);
 
-            const winningMatches = symbolsFound.filter(s => s === winningSymbol).length;
-
-            if (winningMatches === 3) {
-                messageElement.classList.add('win');
-                messageElement.innerHTML = `🎉 **Gefeliciteerd!** U heeft 3x ${winningSymbol} en wint de **Beste Wensen**! 🎅`;
-            } else {
-                // Deze tak zou niet bereikt moeten worden met de huidige `generateSymbols` logica
-                // (omdat we 3 winnaars garanderen), maar het is een fallback.
-                messageElement.classList.classList.add('lose');
-                messageElement.innerHTML = `Helaas, geen 3 dezelfde symbolen. Maar alsnog: **Beste Wensen!** 🎁`;
+            function handleSolved() {
+                message.style.display = 'block';
+                container.style.border = '5px solid #000080';
             }
-        }
 
-        // Start het spel
-        createTiles();
+
+            // --- Initialisatie & Knoppen ---
+            
+            createTiles(); 
+            shuffle(); 
+
+            shuffleButton.addEventListener('click', shuffle);
+            solveButton.addEventListener('click', solvePuzzle); 
+            difficultyToggle.addEventListener('click', toggleDifficulty);
+        });
     </script>
 </body>
 </html>

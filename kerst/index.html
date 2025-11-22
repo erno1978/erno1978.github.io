@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EVELINE & ERNST KERSTWENS 2025</title>
+    <title>Eveline & Ernst</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
     <style>
         /* CSS is hierin opgenomen */
-        /* AANGEPAST LETTERTYPE */
+        
+        /* AANGEPAAST LETTERTYPE */
         @font-face {
             font-family: 'Erno2024';
             src: url('../css/Erno2024.woff2') format('woff2'),
@@ -81,9 +83,8 @@
 
         /* Stijl voor elk tegelvakje */
         .tile {
-            /* background-size blijft 800x800, wat problemen geeft op kleine schermen.
-               We laten de JS dat oplossen, maar houden de pixelwaarden hier aan voor stabiliteit met de vorige versie. */
-            background-size: 800px 800px; 
+            /* FIXED: Scale to full grid size, not individual tile */
+            background-size: calc(var(--grid-size) * 100%) calc(var(--grid-size) * 100%); 
             cursor: pointer;
             transition: transform 0.3s, opacity 0.3s; 
             /* Rand donkerblauw */
@@ -98,22 +99,37 @@
             cursor: default;
         }
         
-        #message {
-            margin-top: 15px;
+        /* GEDEELDE STIJL VOOR BOODSCHAP EN HOOGTE-RESERVERING */
+        #message, #message-placeholder {
+            /* Handhaaf 0 marge om de knoppen dichtbij te houden */
+            margin-top: 0px; 
             /* Ongeveer 50% groter */
             font-size: 2.25em; 
             /* Kleur donkerblauw */
             color: hsl(0, 100%, 27%); 
             font-weight: bold;
             text-align: center;
-            visibility: hidden; /* FIX: Maakt het element onzichtbaar maar behoudt de ruimte */
             /* GECORRIGEERD: Gebruik Eveline2024 lettertype */
             font-family: 'Eveline2024', Arial, sans-serif; 
+        }
+
+        /* De eigenlijke boodschap begint onzichtbaar */
+        #message {
+            opacity: 0; /* Gebruik opacity voor een vloeiendere overgang */
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        /* De placeholder is de hele tijd zichtbaar om de hoogte te reserveren */
+        #message-placeholder {
+            visibility: hidden; /* Maakt het onzichtbaar maar behoudt de ruimte */
+            min-height: 1em; /* Zorg voor minimale hoogte, zelfs met 1 spatie */
         }
 
         /* Knoppen container */
         #controls {
             margin-top: 15px;
+            /* Handhaaf negatieve marge om de boodschap omhoog te trekken */
+            margin-bottom: -10px; 
             display: flex;
             flex-wrap: wrap; 
             justify-content: center;
@@ -124,17 +140,33 @@
             padding: 10px 15px;
             font-size: 1em;
             cursor: pointer;
-            background-color: #002a0a; 
-            color: #fc6060; 
-            border: none;
-            border-radius: 5px;
+            /* Achtergrondkleur */
+            background-color: #c8e6c9; 
+            /* Tekstkleur */
+            color: #800000; 
+            /* AANPASSING 1: Dubbele rand */
+            border: 2px solid #800000; 
+            /* AANPASSING 2: Veel rondere hoeken voor speels effect */
+            border-radius: 20px; 
+            /* AANPASSING 3: Subtiele schaduw en box-shadow */
+            text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.5); 
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4); /* Extra schaduw voor diepte */
+            transition: transform 0.1s, box-shadow 0.1s;
             white-space: nowrap;
+        }
+
+        /* Nieuw: 'Ingeklikt' effect */
+        #controls button:active {
+            transform: translateY(1px);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
         }
 
         /* Specifieke stijl voor de 'Oplossing'-knop */
         #solve-button {
-            background-color: #a71d31;
-            color: #ff0b0b; 
+            /* Achtergrondkleur */
+            background-color: #ffcdd2;
+            /* Tekstkleur */
+            color: #800000; 
         }
     </style>
 </head>
@@ -151,6 +183,7 @@
         <button id="solve-button">Help, ik kom er echt niet uit!</button>
     </div>
 
+    <div id="message-placeholder">... en een jaar waarin alle stukjes op hun plek vallen!</div>
     <div id="message">... en een jaar waarin alle stukjes op hun plek vallen!</div>
 
     <script>
@@ -158,6 +191,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             const container = document.getElementById('puzzle-container');
             const message = document.getElementById('message');
+            const placeholder = document.getElementById('message-placeholder'); 
             const shuffleButton = document.getElementById('shuffle-button');
             const solveButton = document.getElementById('solve-button');
             const difficultyToggle = document.getElementById('difficulty-toggle');
@@ -165,7 +199,6 @@
             let size = 3; 
             let tiles = []; 
             let currentBoard = []; 
-            const IMAGE_SIZE = 800; 
             let emptyTileIndexInSolvedState = 0; 
 
             /**
@@ -173,13 +206,10 @@
              */
             function createTiles() {
                 container.innerHTML = '';
-                // Zorg dat de boodschap verborgen is (visibility)
-                message.style.visibility = 'hidden'; 
-                
+                resetMessage(); 
                 container.style.border = '5px solid #072f17'; 
                 container.classList.remove('solved-background'); 
                 const totalTiles = size * size;
-                const tileSize = IMAGE_SIZE / size; 
                 
                 // Bepaal de index van de lege tegel in de opgeloste staat (rechtsboven)
                 emptyTileIndexInSolvedState = size - 1; 
@@ -199,11 +229,12 @@
                         const row = Math.floor(imageIndex / size);
                         const col = imageIndex % size;
                         
-                        const backgroundX = -col * tileSize;
-                        const backgroundY = -row * tileSize;
+                        // Use calc() to position based on grid fractions
+                        const backgroundX = `calc(${col} * 100% / ${size - 1})`;
+                        const backgroundY = `calc(${row} * 100% / ${size - 1})`;
 
                         tile.style.backgroundImage = `url('kerst.jpg')`; 
-                        tile.style.backgroundPosition = `${backgroundX}px ${backgroundY}px`;
+                        tile.style.backgroundPosition = `${backgroundX} ${backgroundY}`;
                         tile.addEventListener('click', handleTileClick);
                         
                     } else {
@@ -246,13 +277,16 @@
                 return true; 
             }
 
+            // Functie om de boodschap te resetten
+            function resetMessage() {
+                message.style.opacity = '0';
+            }
+
             /**
              * Schuift de tegels.
              */
             function shuffle() {
-                // FIX: Maak de boodschap onzichtbaar bij een nieuwe shuffle
-                message.style.visibility = 'hidden';
-                
+                resetMessage(); 
                 let shuffledTiles;
                 
                 do {
@@ -325,69 +359,63 @@
                 });
             }
 
-            /**
-             * Acties wanneer de puzzel is opgelost.
-             */
             function handleSolved() {
-                // FIX: Maak de tekst zichtbaar
-                message.style.visibility = 'visible'; 
-                container.style.border = '5px solid #072f17';
-                
-                // NIEUWE FUNCTIE: Start confetti!
-                if (window.confetti) {
-                    launchConfetti();
+                // Toon de boodschap
+                message.style.opacity = '1';
+
+                // Activeer confetti!
+                const duration = 5 * 1000; 
+                const animationEnd = Date.now() + duration;
+                const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 99999, scalar: 1.5 }; 
+
+                function randomInRange(min, max) {
+                    return Math.random() * (max - min) + min;
                 }
-            }
-            
-            /**
-             * Stuurt een stroom confetti de lucht in.
-             */
-            function launchConfetti() {
-                const defaults = { 
-                    startVelocity: 50, // Hogere initiële snelheid (schiet verder)
-                    spread: 360,       // Bredere verspreiding
-                    ticks: 150,        // Langer in beeld (was 60)
-                    zIndex: 9999,      // Zorg dat het boven alles is
-                    scalar: 1.5        // Grotere confetti-deeltjes (was 1)
-                };
+                
+                // Laat de confetti van onderaf komen
+                const interval = setInterval(function() {
+                    const timeLeft = animationEnd - Date.now();
 
-                // Linker kanon (meer deeltjes)
-                window.confetti({
-                    ...defaults,
-                    particleCount: 150, // Meer confetti
-                    origin: { x: 0.1, y: 0.7 },
-                    colors: ['#ff0b0b', '#002a0a', '#000080'] // Rood, Groen, Donkerblauw
-                });
+                    if (timeLeft <= 0) {
+                        return clearInterval(interval);
+                    }
+                    
+                    if (typeof confetti !== 'function') {
+                        return clearInterval(interval);
+                    }
 
-                // Rechter kanon (meer deeltjes)
-                window.confetti({
-                    ...defaults,
-                    particleCount: 150, // Meer confetti
-                    origin: { x: 0.9, y: 0.7 },
-                    colors: ['#ff0b0b', '#002a0a', '#000080']
-                });
+                    const particleCount = 50 * (timeLeft / duration);
 
-                // Optioneel: midden kanon voor extra effect
-                window.confetti({
-                    ...defaults,
-                    particleCount: 100, // Iets minder, maar vult het midden
-                    origin: { x: 0.5, y: 0.5 },
-                    colors: ['#ff0b0b', '#002a0a', '#000080']
-                });
+                    // Vuur van links
+                    confetti(Object.assign({}, defaults, { 
+                        particleCount: particleCount * 1.5, 
+                        origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+                        spread: randomInRange(60, 90) 
+                    }));
+
+                    // Vuur van rechts
+                    confetti(Object.assign({}, defaults, { 
+                        particleCount: particleCount * 1.5, 
+                        origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+                        spread: randomInRange(60, 90)
+                    }));
+                }, 250);
+
+                container.style.border = '5px solid #072f17'; // Houd de rand
             }
 
 
             // --- Initialisatie & Knoppen ---
             
-            setTimeout(() => {
-                createTiles(); 
-                shuffle(); 
-                shuffleButton.addEventListener('click', shuffle);
-                solveButton.addEventListener('click', solvePuzzle); 
-                difficultyToggle.addEventListener('click', toggleDifficulty);
-            }, 0);
+            placeholder.style.display = 'block'; 
+
+            createTiles(); 
+            shuffle(); 
+
+            shuffleButton.addEventListener('click', shuffle);
+            solveButton.addEventListener('click', solvePuzzle); 
+            difficultyToggle.addEventListener('click', toggleDifficulty);
         });
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.0/dist/confetti.browser.min.js"></script>
 </body>
 </html>

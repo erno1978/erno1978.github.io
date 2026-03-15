@@ -6,10 +6,6 @@
   font-style: normal;
 }
 
-body {
-  font-family: 'Erno2024Font', sans-serif;
-}
-
 img#ernstig {
   max-width: 100%;
   height: auto;
@@ -38,12 +34,13 @@ html,body,div,span,h1,h2,h3,h4,h5,h6,p,address,img,tr,th,td,header{
   background:transparent
 }
 
-html,body{ 
+html,body{
   line-height:1;
   width:100%;
   height:100%;
   background:#c6d3cb;
   font-size:14px;
+  font-family: 'Erno2024Font', sans-serif;
 }
 
 a:link{ 
@@ -77,12 +74,6 @@ li {
   margin-bottom: 5px; /* Geeft ruimte tussen de lijstitems */
 }
 
-a.language-link:hover { 
-  text-decoration: none; 
-  color: rgb(255, 255, 255);
-  background-color: rgb(1, 65, 1);
-}
-
 a.contact-link:hover {
   color: inherit; /* Houdt de standaardtekstkleur */
   background-color: transparent; /* Geen achtergrondkleurverandering */
@@ -91,19 +82,6 @@ a.contact-link:hover {
 
 body {
   background: linear-gradient(to left top, #958d7c, #546256, #9aac9a);
-}
-
-ul.sublist {
-  list-style-type: square; /* Of 'none' als je geen bullets wilt */
-  color: #814002; /* De kleur van de sublist items */
-  padding-left: 40px; /* Vergroot de inspringing */
-  font-size: 0.75em; /* Maakt de tekst kleiner; pas aan naar wens */
-}
-
-ul.sublist li {
-  margin-top: 0; /* Zet de bovenmarge op 0 */
-  margin-bottom: 0; /* Zet de ondermarge op 0 voor minimale ruimte */
-  padding-bottom: 2px; /* Voegt een beetje ruimte toe onder elk item, pas naar wens aan */
 }
 
 a.comic-link:hover {
